@@ -20,12 +20,69 @@ public class MainActivity extends AppCompatActivity {
     private TextView mReplyTextView;
 
     @Override
+    public void onStart(){
+        super.onStart();
+        Log.d(LOG_TAG, "onStart");
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        Log.d(LOG_TAG, "onPause");
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Log.d(LOG_TAG, "onResume");
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        Log.d(LOG_TAG, "onRestart");
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        Log.d(LOG_TAG, "onStop");
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Log.d(LOG_TAG, "onDestroy");
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        if (mReplyHeadTextView.getVisibility() == View.VISIBLE) {
+            outState.putBoolean("reply_visible", true);
+            outState.putString("reply_text",mReplyTextView.getText().toString());
+        }
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        mMessageEditText = findViewById(R.id.editText_second);
+        Log.d(LOG_TAG, "-------");
+        Log.d(LOG_TAG, "onCreate");
+        mMessageEditText = findViewById(R.id.editText_main);
         mReplyHeadTextView = findViewById(R.id.text_header_reply);
         mReplyTextView = findViewById(R.id.text_message_reply);
+
+        // Restore the state.
+        if (savedInstanceState != null) {
+            boolean isVisible = savedInstanceState.getBoolean("reply_visible");
+            if (isVisible) {
+                mReplyHeadTextView.setVisibility(View.VISIBLE);
+                mReplyTextView.setText(savedInstanceState.getString("reply_text"));
+                mReplyTextView.setVisibility(View.VISIBLE);
+            }
+        }
     }
 
     public void launchSecondActivity(View view) {
@@ -35,22 +92,7 @@ public class MainActivity extends AppCompatActivity {
         intent.putExtra(EXTRA_MESSAGE, message);
         startActivityForResult(intent, TEXT_REQUEST);
     }
-
-    public void launchThirdActivity(View view) {
-        Button btn = (Button) (view);
-        String text = btn.getText().toString();
-        Intent intent = new Intent(this, TextActivity.class);
-        String message = "";
-        if (text == getString(R.string.label_text_one)) {
-            message = getString(R.string.text_one);
-        } else if (text == getString(R.string.label_text_two))
-            message = getString(R.string.text_two);
-        else if (text == getString(R.string.label_text_three))
-            message = getString(R.string.text_three);
-        intent.putExtra(EXTRA_MESSAGE, message);
-        startActivity(intent);
-    }
-
+    
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -64,8 +106,13 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void launchHelloToastActivity(View view) {
-        Intent intent = new Intent(this, HelloToastActivity.class);
+    public void launchShoppingActivity(View view) {
+        Intent intent = new Intent(this, ShoppingListActivity.class);
+        startActivity(intent);
+    }
+
+    public void launchHomework(View view) {
+        Intent intent = new Intent(this, HomeworkActivity.class);
         startActivity(intent);
     }
 }
